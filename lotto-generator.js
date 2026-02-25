@@ -82,41 +82,50 @@ class LottoGenerator extends HTMLElement {
       <style>
         :host {
           display: block;
+          width: 100%;
           max-width: 600px;
           margin: 0 auto;
         }
         .container {
           background: var(--container-bg, #ffffff);
-          padding: 2rem;
+          padding: 1.5rem 1rem;
           border-radius: 20px;
           box-shadow: 0 10px 30px var(--shadow-color);
           transition: all 0.3s ease;
           display: flex;
           flex-direction: column;
           align-items: center;
+          width: 100%;
+          box-sizing: border-box;
         }
         .controls {
           display: flex;
-          gap: 1rem;
-          margin-bottom: 2rem;
+          gap: 0.8rem;
+          margin-bottom: 1.5rem;
+          width: 100%;
+          justify-content: center;
         }
         button {
-          padding: 0.8rem 1.5rem;
+          padding: 0.7rem 1.2rem;
           border: none;
           border-radius: 50px;
           font-weight: bold;
           cursor: pointer;
           transition: transform 0.2s, box-shadow 0.2s;
+          font-size: 0.9rem;
+          white-space: nowrap;
         }
         .btn-generate {
           background: linear-gradient(135deg, #6e8efb, #a777e3);
           color: white;
           box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
+          flex: 2;
         }
         .btn-theme {
           background: var(--card-bg);
           color: var(--text-color);
           border: 1px solid #ddd;
+          flex: 1;
         }
         button:hover {
           transform: translateY(-2px);
@@ -126,30 +135,49 @@ class LottoGenerator extends HTMLElement {
           width: 100%;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.8rem;
         }
         .lotto-row {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
-          padding: 1rem;
+          gap: 5px;
+          padding: 0.8rem;
           background: var(--card-bg);
           border-radius: 12px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          flex-wrap: nowrap; /* Keep them in a single line */
         }
         .ball {
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
           font-weight: bold;
-          font-size: 1.1rem;
+          font-size: 0.9rem;
           text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
           position: relative;
+          flex-shrink: 0;
+        }
+        @media (min-width: 480px) {
+          .ball {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+          }
+          .lotto-row {
+            gap: 0.5rem;
+            padding: 1rem;
+          }
+          .container {
+            padding: 2rem;
+          }
+          button {
+            font-size: 1rem;
+          }
         }
         .yellow { background: radial-gradient(circle at 30% 30%, #fbc400, #d4a700); }
         .blue   { background: radial-gradient(circle at 30% 30%, #69c8f2, #4a9ec4); }
@@ -159,18 +187,18 @@ class LottoGenerator extends HTMLElement {
         
         .plus {
           font-weight: bold;
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           color: var(--text-color);
-          margin: 0 0.2rem;
+          margin: 0 0.1rem;
         }
         .ball.bonus .bonus-label {
           position: absolute;
-          top: -15px;
-          font-size: 0.6rem;
+          top: -12px;
+          font-size: 0.5rem;
           background: #333;
           color: white;
-          padding: 1px 4px;
-          border-radius: 4px;
+          padding: 1px 3px;
+          border-radius: 3px;
           text-transform: uppercase;
         }
       </style>
