@@ -1,3 +1,21 @@
+:root {
+  --bg-color: #f0f2f5;
+  --text-color: #333;
+  --container-bg: #f9f9f9;
+  --card-bg: white;
+  --header-color: #2c3e50;
+  --shadow-color: rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #f0f2f5;
+  --container-bg: #2d2d2d;
+  --card-bg: #3d3d3d;
+  --header-color: #ecf0f1;
+  --shadow-color: rgba(0,0,0,0.4);
+}
+
 body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
@@ -5,21 +23,21 @@ body {
   align-items: center;
   margin: 0;
   padding: 50px 20px;
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 40px;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 800;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px var(--shadow-color);
 }
 
-/* Base styles for the lotto generator container */
 lotto-generator {
   width: 100%;
   max-width: 800px;
