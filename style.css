@@ -37,3 +37,12 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
+footer {
+  margin-top: 3rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
