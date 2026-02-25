@@ -1,172 +1,30 @@
 class LottoGenerator extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: 'open' });
-
-    const wrapper = document.createElement('div');
-    wrapper.setAttribute('class', 'lotto-generator');
-
-    const controls = document.createElement('div');
-    controls.setAttribute('class', 'controls');
-
-    const button = document.createElement('button');
-    button.textContent = 'Generate 5 Sets of Numbers';
-    button.addEventListener('click', () => this.generateFiveSets());
-
-    const themeToggle = document.createElement('button');
-    themeToggle.setAttribute('class', 'theme-toggle');
-    this.updateThemeButton(themeToggle);
-    themeToggle.addEventListener('click', () => {
-      this.toggleTheme();
-      this.updateThemeButton(themeToggle);
-    });
-
-    const setsContainer = document.createElement('div');
-    setsContainer.setAttribute('class', 'lotto-sets-container');
-
-    const style = document.createElement('style');
-    style.textContent = `
-      :host {
-        display: block;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-      .lotto-generator {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        background: var(--container-bg, #f9f9f9);
-        border-radius: 12px;
-        box-shadow: 0 4px 15px var(--shadow-color, rgba(0,0,0,0.1));
-        max-width: 650px;
-        width: 100%;
-        margin: 20px auto;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-      }
-      .controls {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 25px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      button {
-        padding: 12px 24px;
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        border: none;
-        border-radius: 30px;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-        box-shadow: 0 4px 10px rgba(110, 142, 251, 0.4);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .theme-toggle {
-        background: linear-gradient(135deg, #444, #222);
-        font-size: 14px;
-        padding: 10px 20px;
-      }
-      button:hover {
-        transform: translateY(-2px);
-        opacity: 0.9;
-      }
-      button:active {
-        transform: translateY(0);
-      }
-      .lotto-sets-container {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-      .lotto-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 15px;
-        background: var(--card-bg, white);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px var(--shadow-color, rgba(0,0,0,0.05));
-        transition: background 0.3s ease;
-      }
-      .lotto-ball {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-      }
-      .bonus-section {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-left: 5px;
-        padding-left: 10px;
-        border-left: 2px dashed #ccc;
-      }
-      .bonus-plus {
-        font-size: 18px;
-        font-weight: bold;
-        color: var(--text-color, #666);
-      }
-      .bonus-tag {
-        font-size: 10px;
-        background: #f0f0f0;
-        color: #666;
-        padding: 2px 6px;
-        border-radius: 10px;
-        position: absolute;
-        transform: translateY(-30px);
-        font-weight: bold;
-        text-transform: uppercase;
-      }
-      .color-1 { background: radial-gradient(circle at 30% 30%, #fbc400, #d4a700); }
-      .color-2 { background: radial-gradient(circle at 30% 30%, #69c8f2, #4a9ec4); }
-      .color-3 { background: radial-gradient(circle at 30% 30%, #ff7272, #d64d4d); }
-      .color-4 { background: radial-gradient(circle at 30% 30%, #aaaaaa, #888888); }
-      .color-5 { background: radial-gradient(circle at 30% 30%, #b0d840, #8eb231); }
-    `;
-
-    shadow.appendChild(style);
-    shadow.appendChild(wrapper);
-    wrapper.appendChild(controls);
-    controls.appendChild(button);
-    controls.appendChild(themeToggle);
-    wrapper.appendChild(setsContainer);
+    this.attachShadow({ mode: 'open' });
   }
 
-  updateThemeButton(button) {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
-    button.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+  connectedCallback() {
+    this.render();
   }
 
   toggleTheme() {
     const body = document.body;
-    if (body.getAttribute('data-theme') === 'dark') {
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    if (isDark) {
       body.removeAttribute('data-theme');
     } else {
       body.setAttribute('data-theme', 'dark');
     }
+    this.render(); // Re-render to update toggle button text
   }
 
-  generateFiveSets() {
-    const setsContainer = this.shadowRoot.querySelector('.lotto-sets-container');
-    setsContainer.innerHTML = '';
-
-    for (let i = 0; i < 5; i++) {
-      const set = this.createSingleSet();
-      setsContainer.appendChild(set);
-    }
+  getColorForNumber(number) {
+    if (number <= 10) return 'yellow';
+    if (number <= 20) return 'blue';
+    if (number <= 30) return 'red';
+    if (number <= 40) return 'gray';
+    return 'green';
   }
 
   createSingleSet() {
@@ -181,131 +39,154 @@ class LottoGenerator extends HTMLElement {
       bonusNumber = Math.floor(Math.random() * 45) + 1;
     } while (numbers.has(bonusNumber));
 
-    const row = document.createElement('div');
-    row.setAttribute('class', 'lotto-row');
-
-    for (const number of sortedNumbers) {
-      row.appendChild(this.createBall(number));
-    }
-
-    const bonusSection = document.createElement('div');
-    bonusSection.setAttribute('class', 'bonus-section');
-
-    const plus = document.createElement('span');
-    plus.setAttribute('class', 'bonus-plus');
-    plus.textContent = '+';
-
-    const bonusTag = document.createElement('span');
-    bonusTag.setAttribute('class', 'bonus-tag');
-    bonusTag.textContent = 'Bonus';
-
-    bonusSection.appendChild(plus);
-    bonusSection.appendChild(bonusTag);
-    bonusSection.appendChild(this.createBall(bonusNumber));
-    
-    row.appendChild(bonusSection);
-
-    return row;
-  }
-
-  createBall(number) {
-    const ball = document.createElement('div');
-    ball.setAttribute('class', `lotto-ball color-${this.getColorForNumber(number)}`);
-    ball.textContent = number;
-    return ball;
-  }
-
-  getColorForNumber(number) {
-    if (number <= 10) return 1;
-    if (number <= 20) return 2;
-    if (number <= 30) return 3;
-    if (number <= 40) return 4;
-    return 5;
-  }
-}
-
-customElements.define('lotto-generator', LottoGenerator);
-
-  createBall(number) {
-    const ball = document.createElement('div');
-    ball.setAttribute('class', `lotto-ball color-${this.getColorForNumber(number)}`);
-    ball.textContent = number;
-    return ball;
-  }
-
-  getColorForNumber(number) {
-    if (number <= 10) return 1;
-    if (number <= 20) return 2;
-    if (number <= 30) return 3;
-    if (number <= 40) return 4;
-    return 5;
-  }
-}
-
-customElements.define('lotto-generator', LottoGenerator);
-
-    shadow.appendChild(style);
-    shadow.appendChild(wrapper);
-    wrapper.appendChild(button);
-    wrapper.appendChild(setsContainer);
+    return { main: sortedNumbers, bonus: bonusNumber };
   }
 
   generateFiveSets() {
-    const setsContainer = this.shadowRoot.querySelector('.lotto-sets-container');
-    setsContainer.innerHTML = ''; // Clear previous sets
-
-    for (let i = 0; i < 5; i++) {
-      const set = this.createSingleSet();
-      setsContainer.appendChild(set);
-    }
-  }
-
-  createSingleSet() {
-    const numbers = new Set();
-    while (numbers.size < 6) {
-      numbers.add(Math.floor(Math.random() * 45) + 1);
-    }
-    const sortedNumbers = [...numbers].sort((a, b) => a - b);
+    const container = this.shadowRoot.querySelector('.sets-container');
+    container.innerHTML = '';
     
-    // Generate bonus number
-    let bonusNumber;
-    do {
-      bonusNumber = Math.floor(Math.random() * 45) + 1;
-    } while (numbers.has(bonusNumber));
+    for (let i = 0; i < 5; i++) {
+      const setData = this.createSingleSet();
+      const row = document.createElement('div');
+      row.className = 'lotto-row';
 
-    const row = document.createElement('div');
-    row.setAttribute('class', 'lotto-row');
+      setData.main.forEach(num => {
+        const ball = document.createElement('div');
+        ball.className = `ball ${this.getColorForNumber(num)}`;
+        ball.textContent = num;
+        row.appendChild(ball);
+      });
 
-    // Add main balls
-    for (const number of sortedNumbers) {
-      row.appendChild(this.createBall(number));
+      const plus = document.createElement('div');
+      plus.className = 'plus';
+      plus.textContent = '+';
+      row.appendChild(plus);
+
+      const bonusBall = document.createElement('div');
+      bonusBall.className = `ball ${this.getColorForNumber(setData.bonus)} bonus`;
+      bonusBall.textContent = setData.bonus;
+      const bonusLabel = document.createElement('span');
+      bonusLabel.className = 'bonus-label';
+      bonusLabel.textContent = 'Bonus';
+      bonusBall.appendChild(bonusLabel);
+      row.appendChild(bonusBall);
+
+      container.appendChild(row);
     }
-
-    // Add plus sign
-    const plus = document.createElement('span');
-    plus.setAttribute('class', 'bonus-plus');
-    plus.textContent = '+';
-    row.appendChild(plus);
-
-    // Add bonus ball
-    row.appendChild(this.createBall(bonusNumber));
-
-    return row;
   }
 
-  createBall(number) {
-    const ball = document.createElement('div');
-    ball.setAttribute('class', `lotto-ball color-${this.getColorForNumber(number)}`);
-    ball.textContent = number;
-    return ball;
-  }
+  render() {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .container {
+          background: var(--container-bg, #ffffff);
+          padding: 2rem;
+          border-radius: 20px;
+          box-shadow: 0 10px 30px var(--shadow-color);
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .controls {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 2rem;
+        }
+        button {
+          padding: 0.8rem 1.5rem;
+          border: none;
+          border-radius: 50px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-generate {
+          background: linear-gradient(135deg, #6e8efb, #a777e3);
+          color: white;
+          box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
+        }
+        .btn-theme {
+          background: var(--card-bg);
+          color: var(--text-color);
+          border: 1px solid #ddd;
+        }
+        button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .sets-container {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .lotto-row {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 1rem;
+          background: var(--card-bg);
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .ball {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 1.1rem;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+          position: relative;
+        }
+        .yellow { background: radial-gradient(circle at 30% 30%, #fbc400, #d4a700); }
+        .blue   { background: radial-gradient(circle at 30% 30%, #69c8f2, #4a9ec4); }
+        .red    { background: radial-gradient(circle at 30% 30%, #ff7272, #d64d4d); }
+        .gray   { background: radial-gradient(circle at 30% 30%, #aaaaaa, #888888); }
+        .green  { background: radial-gradient(circle at 30% 30%, #b0d840, #8eb231); }
+        
+        .plus {
+          font-weight: bold;
+          font-size: 1.5rem;
+          color: var(--text-color);
+          margin: 0 0.2rem;
+        }
+        .ball.bonus .bonus-label {
+          position: absolute;
+          top: -15px;
+          font-size: 0.6rem;
+          background: #333;
+          color: white;
+          padding: 1px 4px;
+          border-radius: 4px;
+          text-transform: uppercase;
+        }
+      </style>
+      <div class="container">
+        <div class="controls">
+          <button class="btn-generate">✨ Generate 5 Sets</button>
+          <button class="btn-theme">${isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}</button>
+        </div>
+        <div class="sets-container">
+          <!-- Rows will be injected here -->
+        </div>
+      </div>
+    `;
 
-  getColorForNumber(number) {
-    if (number <= 10) return 1;
-    if (number <= 20) return 2;
-    if (number <= 30) return 3;
-    if (number <= 40) return 4;
-    return 5;
+    this.shadowRoot.querySelector('.btn-generate').addEventListener('click', () => this.generateFiveSets());
+    this.shadowRoot.querySelector('.btn-theme').addEventListener('click', () => this.toggleTheme());
   }
 }
 
