@@ -6,6 +6,8 @@ This project is a modern lottery number generator built using Web Components. It
 
 ## Implemented Features
 
+*   **Refined Theme Toggle:** Dynamic button text and smooth full-page transitions.
+*   **Clear Bonus Label:** Each generated set explicitly labels the bonus number for better clarity.
 *   **Theme Toggle (Light/Dark Mode):** Integrated a theme switcher that allows users to toggle between light and dark modes, using CSS variables for smooth transitions.
 *   **Multi-Set Generation:** Generates 5 sets of lotto numbers simultaneously with a single click.
 *   **Lotto Number Logic:** Each set consists of 6 unique main numbers (1-45) and 1 bonus number (1-45), ensuring the bonus is not among the main numbers.
