@@ -7,64 +7,150 @@ class LottoGenerator extends HTMLElement {
     wrapper.setAttribute('class', 'lotto-generator');
 
     const button = document.createElement('button');
-    button.textContent = 'Generate Numbers';
-    button.addEventListener('click', () => this.generateNumbers());
+    button.textContent = 'Generate 5 Sets of Numbers';
+    button.addEventListener('click', () => this.generateFiveSets());
 
-    const numbersDiv = document.createElement('div');
-    numbersDiv.setAttribute('class', 'lotto-numbers');
+    const setsContainer = document.createElement('div');
+    setsContainer.setAttribute('class', 'lotto-sets-container');
 
     const style = document.createElement('style');
     style.textContent = `
+      :host {
+        display: block;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
       .lotto-generator {
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 20px auto;
       }
-      .lotto-numbers {
-        margin-top: 20px;
+      button {
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 10px rgba(110, 142, 251, 0.4);
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(110, 142, 251, 0.5);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+      .lotto-sets-container {
+        width: 100%;
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .lotto-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       }
       .lotto-ball {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
+        font-size: 16px;
         font-weight: bold;
         color: white;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
       }
-      .color-1 { background-color: #FBC400; } /* Yellow */
-      .color-2 { background-color: #69C8F2; } /* Blue */
-      .color-3 { background-color: #FF7272; } /* Red */
-      .color-4 { background-color: #AAAAAA; } /* Gray */
-      .color-5 { background-color: #B0D840; } /* Green */
+      .bonus-plus {
+        font-size: 20px;
+        font-weight: bold;
+        color: #666;
+        margin: 0 5px;
+      }
+      .bonus-label {
+        font-size: 12px;
+        color: #888;
+        margin-top: -15px;
+        margin-bottom: 5px;
+      }
+      .color-1 { background: radial-gradient(circle at 30% 30%, #fbc400, #d4a700); } /* Yellow */
+      .color-2 { background: radial-gradient(circle at 30% 30%, #69c8f2, #4a9ec4); } /* Blue */
+      .color-3 { background: radial-gradient(circle at 30% 30%, #ff7272, #d64d4d); } /* Red */
+      .color-4 { background: radial-gradient(circle at 30% 30%, #aaaaaa, #888888); } /* Gray */
+      .color-5 { background: radial-gradient(circle at 30% 30%, #b0d840, #8eb231); } /* Green */
     `;
 
     shadow.appendChild(style);
     shadow.appendChild(wrapper);
     wrapper.appendChild(button);
-    wrapper.appendChild(numbersDiv);
+    wrapper.appendChild(setsContainer);
   }
 
-  generateNumbers() {
+  generateFiveSets() {
+    const setsContainer = this.shadowRoot.querySelector('.lotto-sets-container');
+    setsContainer.innerHTML = ''; // Clear previous sets
+
+    for (let i = 0; i < 5; i++) {
+      const set = this.createSingleSet();
+      setsContainer.appendChild(set);
+    }
+  }
+
+  createSingleSet() {
     const numbers = new Set();
     while (numbers.size < 6) {
       numbers.add(Math.floor(Math.random() * 45) + 1);
     }
     const sortedNumbers = [...numbers].sort((a, b) => a - b);
     
-    const numbersDiv = this.shadowRoot.querySelector('.lotto-numbers');
-    numbersDiv.innerHTML = ''; // Clear previous numbers
+    // Generate bonus number
+    let bonusNumber;
+    do {
+      bonusNumber = Math.floor(Math.random() * 45) + 1;
+    } while (numbers.has(bonusNumber));
 
+    const row = document.createElement('div');
+    row.setAttribute('class', 'lotto-row');
+
+    // Add main balls
     for (const number of sortedNumbers) {
-      const ball = document.createElement('div');
-      ball.setAttribute('class', `lotto-ball color-${this.getColorForNumber(number)}`);
-      ball.textContent = number;
-      numbersDiv.appendChild(ball);
+      row.appendChild(this.createBall(number));
     }
+
+    // Add plus sign
+    const plus = document.createElement('span');
+    plus.setAttribute('class', 'bonus-plus');
+    plus.textContent = '+';
+    row.appendChild(plus);
+
+    // Add bonus ball
+    row.appendChild(this.createBall(bonusNumber));
+
+    return row;
+  }
+
+  createBall(number) {
+    const ball = document.createElement('div');
+    ball.setAttribute('class', `lotto-ball color-${this.getColorForNumber(number)}`);
+    ball.textContent = number;
+    return ball;
   }
 
   getColorForNumber(number) {
